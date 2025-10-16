@@ -9,7 +9,7 @@ export const handler = async (event: any) => {
   try {
     const body = JSON.parse(event.body || '{}');
     const { match_id, pick, stake } = body;
-    const userId = event.headers['x-user-id'] || '00000000-0000-0000-0000-000000000000'; // à remplacer par vraie auth plus tard
+    const userId = event.headers['x-user-id'] || '{"idx":0,"id":"00000000-0000-0000-0000-000000000000","username":"test_user","credits":5000,"created_at":"2025-10-16 16:00:13.945104+00"}'; // à remplacer par vraie auth plus tard
 
     if (!match_id || !pick || !stake) return resp(400, { error: 'missing params' });
 
