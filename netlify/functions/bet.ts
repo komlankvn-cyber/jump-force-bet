@@ -9,7 +9,7 @@ export const handler = async (event: any) => {
   try {
     const body = JSON.parse(event.body || '{}');
     const { match_id, pick, stake } = body;
-    const userId = 00000000-0000-0000-0000-000000000001; // ton identifiant user test
+    const userId = '00000000-0000-0000-0000-000000000001'; // ton identifiant user test
 
     if (!match_id || !pick || !stake) return resp(400, { error: 'missing params' });
 
