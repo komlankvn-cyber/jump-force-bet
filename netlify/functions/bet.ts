@@ -9,20 +9,33 @@ export const handler = async (event: any) => {
   try {
     const body = JSON.parse(event.body || '{}');
     const { match_id, pick, stake } = body;
-    const userId = event.headers['x-user-id'] || '{"idx":0,"id":"00000000-0000-0000-0000-000000000000","username":"test_user","credits":5000,"created_at":"2025-10-16 16:00:13.945104+00"}'; // à remplacer par vraie auth plus tard
+    const userId = 00000000-0000-0000-0000-000000000001; // ton identifiant user test
 
     if (!match_id || !pick || !stake) return resp(400, { error: 'missing params' });
 
     // récupérer les mises déjà placées
-    const { data: bets } = await supabaseAdmin.from('bets').select('stake,pick_char').eq('match_id', match_id);
-    const poolA = (bets || []).filter(b => b.pick_char === pick).reduce((s, b) => s + Number(b.stake), 0);
-    const poolB = (bets || []).filter(b => b.pick_char !== pick).reduce((s, b) => s + Number(b.stake), 0);
+    const { data: bets } = await supabaseAdmin
+      .from('bets')
+      .select('stake,pick_char')
+      .eq('match_id', match_id);
+
+    const poolA = (bets || [])
+      .filter(b => b.pick_char === pick)
+      .reduce((s, b) => s + Number(b.stake), 0);
+    const poolB = (bets || [])
+      .filter(b => b.pick_char !== pick)
+      .reduce((s, b) => s + Number(b.stake), 0);
     const total = poolA + poolB + stake;
     const mySide = poolA + stake;
     const odds = Number(((total * 0.9) / Math.max(mySide, 1)).toFixed(4));
 
     // vérifier le solde utilisateur
-    const { data: user } = await supabaseAdmin.from('users').select('*').eq('id', userId).single();
+    const { data: user } = await supabaseAdmin
+      .from('users')
+      .select('*')
+      .eq('id', userId)
+      .single();
+
     if (!user || user.credits < stake) return resp(400, { error: 'solde insuffisant' });
 
     // débiter et enregistrer le pari
@@ -33,6 +46,7 @@ export const handler = async (event: any) => {
       p_stake: stake,
       p_odds: odds,
     });
+
     if (e1) return resp(400, { error: e1.message });
 
     return resp(200, { ok: true, odds });
