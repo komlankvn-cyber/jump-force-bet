@@ -1,7 +1,11 @@
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+import "./globals.css";
+import BackButton from "../src/components/BackButton";
+
+export default function RootLayout({ children }) {
   return (
     <html lang="fr">
-      <body style={{ maxWidth: 800, margin: '0 auto', padding: 16 }}>
+      <body>
+        <BackButton />
         {children}
       </body>
     </html>
