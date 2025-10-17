@@ -1,12 +1,21 @@
-import { useNavigate } from "react-router-dom";
+"use client";
+import { useRouter } from "next/navigation";
 
 export default function BackButton() {
-  const navigate = useNavigate();
+  const router = useRouter();
   return (
     <button
-      onClick={() => navigate(-1)}
-      className="inline-flex items-center gap-2 px-3 py-2 rounded-xl bg-purple-600 text-white font-semibold hover:bg-purple-700 active:scale-95 transition"
-      aria-label="Revenir en arrière"
+      onClick={() => router.back()}
+      style={{
+        backgroundColor: "#6C2BD9",
+        color: "white",
+        border: "none",
+        padding: "10px 16px",
+        borderRadius: "10px",
+        fontWeight: "600",
+        cursor: "pointer",
+        marginBottom: "15px",
+      }}
     >
       ← Retour
     </button>
