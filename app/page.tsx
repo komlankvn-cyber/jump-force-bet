@@ -1,30 +1,54 @@
-'use client';
-import { createClient } from '@supabase/supabase-js';
-import { useEffect, useState } from 'react';
-
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-);
+"use client";
+import { useState } from "react";
 
 export default function Home() {
-  const [tournaments, setTournaments] = useState<any[]>([]);
+  const [size, setSize] = useState(8);
+  const [res, setRes] = useState<any>(null);
+  const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    supabase.from('tournaments').select('*').then(r => setTournaments(r.data || []));
-  }, []);
+  const createTournament = async () => {
+    setLoading(true);
+    const r = await fetch(`/.netlify/functions/createTournament?size=${size}`);
+    const data = await r.json();
+    setRes(data);
+    setLoading(false);
+  };
 
   return (
-    <div>
-      <h1>Jump Force Bet Arena</h1>
-      <a href="/tournaments/new">Créer un tournoi (admin)</a>
-      <ul>
-        {tournaments.map(t => (
-          <li key={t.id}>
-            <a href={`/tournaments/${t.id}`}>{t.name}</a> — {t.status} — pot {t.pot}
-          </li>
-        ))}
-      </ul>
-    </div>
+    <main className="p-4">
+      <h1 className="text-xl font-bold mb-3">Créer un tournoi Jump Force</h1>
+      <div className="flex gap-2 mb-4">
+        <select
+          value={size}
+          onChange={(e) => setSize(Number(e.target.value))}
+          className="border rounded px-2 py-1"
+        >
+          <option value={8}>8 joueurs</option>
+          <option value={16}>16 joueurs</option>
+          <option value={32}>32 joueurs</option>
+        </select>
+        <button
+          onClick={createTournament}
+          disabled={loading}
+          className="bg-purple-600 text-white px-4 py-2 rounded"
+        >
+          {loading ? "Création..." : "Créer le tournoi"}
+        </button>
+      </div>
+
+      {res?.tournament && (
+        <div className="mt-3">
+          <p>
+            Tournoi créé : <b>{res.tournament.name}</b>
+          </p>
+          <a
+            href={`/tournaments/${res.tournament.id}`}
+            className="underline text-blue-400"
+          >
+            Voir le tournoi
+          </a>
+        </div>
+      )}
+    </main>
   );
 }
